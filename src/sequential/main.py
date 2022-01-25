@@ -1,9 +1,10 @@
 from math import sqrt
 from time import time
+import tracemalloc
 
 input = {
-    "n": 2000,
-    "m": 2000,
+    "n": 1000,
+    "m": 1000,
     "points": [(1,3), (3,2), (6,8), (9,6), (5,5)]
 }
 
@@ -15,6 +16,7 @@ def f():
     points = input["points"]
 
     nearest_point = []
+
 
     time_start = time()
     for i in range(rows):
@@ -29,9 +31,12 @@ def f():
             nearest_point.append(p_index)
     time_delta = time() - time_start
 
-    # print(nearest_point)
     print(time_delta)
+    # print(nearest_point)
 
 
 if __name__ == "__main__":
+    tracemalloc.start()
     f()
+    current, peak = tracemalloc.get_traced_memory()
+    print(current / 10**6, peak / 10**6)
