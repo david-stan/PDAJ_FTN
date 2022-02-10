@@ -2,20 +2,12 @@ from math import sqrt
 from time import time
 import tracemalloc
 
-input = {
-    "n": 1000,
-    "m": 1000,
-    "points": [(1,3), (3,2), (6,8), (9,6), (5,5)]
-}
-
 def dist(point_x, point_y):
     return sqrt((point_x[0] - point_y[0])**2 + (point_x[1] - point_y[1])**2)
 
-def matrix_gen():
-    rows, cols = input["n"], input["m"]
-
-    for i in range(rows):
-        for j in range(cols):
+def matrix_gen(nrows, ncols):
+    for i in range(nrows):
+        for j in range(ncols):
             yield i, j
 
 def matrix_calc(matrix_gen, points):
@@ -29,24 +21,30 @@ def matrix_calc(matrix_gen, points):
                 p_index = idx
         yield p_index
 
-nearest_point = []
+nearest_points = []
 def matrix_store(idx_gen):
     for i in idx_gen:
-        nearest_point.append(i)
+        nearest_points.append(i)
 
 
-if __name__ == "__main__":
-    time_start = time()
+def calculate(parameters):
+    nrows, ncols, points = parameters["n"], parameters["m"], parameters["points"]
+
     tracemalloc.start()
-    matrix = matrix_gen()
-    points = input["points"]
+    time_start = time()
+    
+    matrix = matrix_gen(nrows, ncols)
     ids = matrix_calc(matrix, points)
     
     
     
-    current, peak = tracemalloc.get_traced_memory()
     matrix_store(ids)
     time_delta = time() - time_start
-    print(time_delta)
-    print(current / 10**6, peak / 10**6)
-    # print(nearest_point)
+    current, peak = tracemalloc.get_traced_memory()
+    
+    ret = {
+        # "result": nearest_points,
+        "time_in_s": time_delta,
+        "max_memory_in_MB": peak / 10**6
+    }
+    return ret

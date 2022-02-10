@@ -2,22 +2,15 @@ from concurrent.futures import process
 from math import sqrt
 from time import time
 from multiprocessing import cpu_count, Pool
+import tracemalloc
 
-input = {
-    "n": 1000,
-    "m": 1000,
-    "points": [(1,3), (3,2), (6,8), (9,6), (5,5)]
-}
 
 def dist(point_x, point_y):
     return sqrt((point_x[0] - point_y[0])**2 + (point_x[1] - point_y[1])**2)
 
-def matrix_gen():
-    rows, cols = input["n"], input["m"]
-    points = input["points"]
-
-    for i in range(rows):
-        for j in range(cols):
+def matrix_gen(nrows, ncols, points):
+    for i in range(nrows):
+        for j in range(ncols):
             yield i, j, points
 
 def _worker(args):
@@ -32,23 +25,35 @@ def _worker(args):
     return p_index
 
 
-def matrix_calc():
-    with Pool(processes=16) as pool:
+def matrix_calc(nrows, ncols, points):
+    with Pool(processes=8) as pool:
         yield from pool.map(
             _worker,
-            matrix_gen(),
+            matrix_gen(nrows, ncols, points),
         )
 
-nearest_point = []
+nearest_points = []
 
 def matrix_store(matrix):
     for i in matrix:
-        nearest_point.append(i)
+        nearest_points.append(i)
 
-if __name__ == "__main__":
+def calculate(parameters):
+    nrows, ncols, points = parameters["n"], parameters["m"], parameters["points"]
+
+    tracemalloc.start()
     s = time()
-    nums = matrix_calc()
+    nums = matrix_calc(nrows, ncols, points)
     matrix_store(nums)
     delta = time() - s
-    print("Measured time:", delta)
-    print(nearest_point[:100])
+    
+    current, peak = tracemalloc.get_traced_memory()
+    
+    
+
+    ret = {
+        # "result": nearest_points,
+        "time_in_s": delta,
+        "max_memory_in_MB": peak / 10**6
+    }
+    return ret

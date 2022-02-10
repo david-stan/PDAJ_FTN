@@ -6,6 +6,12 @@ authors = ["David Stanojevic <davidstanojevic43@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+mpi4py = "^3.1"
+Django = "^3.2.9"
+djangorestframework = "^3.12.4"
+markdown = "^3.*"
+django-filter = "^21.*"
+pysqlite3 = "*"
 
 [tool.poetry.dev-dependencies]
 
