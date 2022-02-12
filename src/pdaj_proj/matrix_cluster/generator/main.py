@@ -37,10 +37,10 @@ def calculate(parameters):
     ids = matrix_calc(matrix, points)
     
     
-    
+    current, peak = tracemalloc.get_traced_memory()
     matrix_store(ids)
     time_delta = time() - time_start
-    current, peak = tracemalloc.get_traced_memory()
+    
     
     ret = {
         # "result": nearest_points,
